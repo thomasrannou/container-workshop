@@ -1,0 +1,19 @@
+{
+    "infos": {
+        "title": "Atelier Azure Kubernetes Services",
+        "github": "https://github.com/thomasrannou/aks-workshop",
+        "description": "Ce workshop, accessible à tous les développeurs même sans connaissance de Kubernetes ou d'Azure, vous permettra de découvrir le déploiement de cluster Kubernetes dans Azure ainsi que le déploiement d'application conteneurisée dans cet environnement."
+    },
+    "authors": [
+        {
+            "name": "Thomas Rannou",
+            "url": "https://twitter.com/thomas_rannou",
+            "avatar": "thomas.png"
+        },
+        {
+            "name": "Olivier Leplus",
+            "url": "https://twitter.com/olivierleplus",
+            "avatar": "olivier.png"
+        }
+    ]
+}

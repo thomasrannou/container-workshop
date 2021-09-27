@@ -287,8 +287,41 @@ _az webapp log tail --name dotnetappservices --resource-group rg-workshop_
 
 --sep--
 ---
-title: Azure Kubernetes Services
+title: AKS : le service managé k8s dans Azure
 ---
+
+# AKS : Le service managé K8S dans Azure
+
+Avant de présenter Azure Kubernetes Service en tant que produit Azure, il faut s’intéresser à l’outil Kubernetes lui même.
+
+Kubernetes est une plateforme open source d’orchestration de containers créée par Google, puis offert à la Cloud Native Computing Foundation en 2015.
+Kubernetes permet d’automatiser le déploiement et la gestion d’applications conteneurisées. Il gère le cycle de vie des services en proposant scalabilité et haute disponibilité.
+
+Kubernetes peut fonctionner avec n’importe quel système de container conforme au standard Open Container Initiative et notamment le plus connu d’entre eux : Docker.
+
+## Architecture de Kubernetes
+
+![Architecture de Kubernetes](media/Kubernetes-architecture.png)
+
+**Master** : Le Kubernetes master est responsable du maintien de l’état souhaité pour votre cluster. Il gère la disponibilité des nodes.
+
+**etcd** : les données de configuration du cluster. Il représente l’état du cluster à n’importe quel instant.
+
+**Node** : Machine virtuelle ou physique permettant l’exécution de pods.
+
+**Kubelet** : il est responsable de l’état d’exécution de chaque nœud. Il prend en charge le démarrage, l’arrêt, et la maintenance des conteneurs d’applications organisés en pods.
+
+**kubeproxy** : Il est responsable d’effectuer le routage du trafic vers le conteneur approprié.
+
+**Pod** : unité d’exécution de K8s. Contient un ou plusieurs conteneur. Un Pod représente un processus en cours d’exécution dans votre cluster.
+
+## Kubernetes dans Azure
+
+En mars 2016, Microsoft lance Azure Container Service. ACS est une offre PAAS, aujourd’hui obsolète, permettant de déployer rapidement un cluster Kubernetes, DC/OS ou Docker Swarm pour provisionner et manager des conteneur Docker.
+
+Aussi, compte tenu de l’engouement autour de Kubernetes, Microsoft a décidé avec AKS (Azure Kubernetes Services) d’investir fortement sur l’intégration de Kubernetes dans Azure et d’en faire un service managé. Azure gère pour nous les tâches critiques telles que le déploipement, l’analyse de l’intégrité et la maintenance.  Nous devons uniquement nous soucier des nœuds de notre cluster.
+
+Grâce à AKS, plateforme de choix pour la mise en oeuvre de microservices, Microsoft nous propose dans Azure une stack technique agile et robuste pour déployer et manager nos containers.
 
 ## Création du cluster Azure Kubernetes Services
 

@@ -97,7 +97,15 @@ title: Docker, pour qui ? Pour quoi ?
 # Docker, pour qui ? Pour quoi ?
 
 ## La conteneurisation applicative
-## Présentation de Docker
+
+Conteneuriser c'est empaqueter une application et ses dépendances dans un conteneur isolé, qui pourra être exécuté sur n'importe quel serveur. 
+Cela permet d'étendre la flexibilité et la portabilité d’exécution d'une application, que ce soit sur la machine locale, un cloud privé ou public, une machine nue, etc.
+
+## Introduction à Docker 
+
+Docker offre une interface permettant de facilement isoler un processus et un filesystem. 
+Cela permet d’exécuter des applications (conteneurs) de manière isolé les unes des autres. 
+Docker permet également de construire des images via un système d’empilement de couches (Dockerfile). Ces images sont immuables et peuvent être instanciées (conteneur).
 
 --sep--
 ---
@@ -265,6 +273,7 @@ Je créé ma webapp :
 _az webapp create --resource-group rg-workshop --plan plan-workshop --name dotnetappservices --deployment-container-image-name acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1_
 
 // Ne fonctionnera pas.
+
 https://github.com/Azure/app-service-linux-docs/blob/master/service_principal_auth_acr.md
 
 $SP_PASSWD=$(az ad sp create-for-rbac --name http://sp-acr --scopes $registryId --role acrpull --query password --output tsv)

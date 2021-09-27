@@ -1,8 +1,8 @@
 {
     "infos": {
-        "title": "Atelier Azure Kubernetes Services",
+        "title": "Déployer vos conteneurs Docker dans Azure",
         "github": "https://github.com/thomasrannou/aks-workshop",
-        "description": "Ce workshop, accessible à tous les développeurs même sans connaissance de Kubernetes ou d'Azure, vous permettra de découvrir le déploiement de cluster Kubernetes dans Azure ainsi que le déploiement d'application conteneurisée dans cet environnement."
+        "description": "Ce workshop, accessible à tous les développeurs même sans connaissance de Docker ou d'Azure, vous permettra de découvrir le déploiement d'application conteneurisée au travers de différents services Azure."
     },
     "authors": [
         {

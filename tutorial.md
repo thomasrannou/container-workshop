@@ -96,7 +96,6 @@ title: Docker, pour qui ? Pour quoi ?
 
 # Docker, pour qui ? Pour quoi ?
 
-
 ## La conteneurisation applicative
 ## Présentation de Docker
 
@@ -218,25 +217,38 @@ J’obtiens alors un JSON descriptif de l’autorisation accordée :
 
 ![Affectation du rôle](media/12-roleassignacrpull.PNG)
 
+--sep--
+---
+title: Azure Container Instance
+---
+
 ## Azure Container Instance
 
-Aizure Container Instance (ou ACI) est le moyen le plus simple d’exécuter un conteneur Docker dans Azure. Un simple _az container create_ permet de déployer en quelques secondes une image Docker dans une ACI. Ici on a une solution qui est donc plutôt orienté :
+Azure Container Instance (ou ACI) est le moyen le plus simple d’exécuter un conteneur Docker dans Azure. Un simple _az container create_ permet de déployer en quelques secondes une image Docker dans une ACI. 
+
+Cette solution est donc plutôt orienté :
 
 - Exécution temporaire d’un conteneur
 - A la demande par exemple pour un traitement ponctuel
-- Serverless (on ne configure pas de vm ni de runtime d'execution, on fournis juste l'image Docker à exécuter)
+- Serverless (on ne configure pas de vm ni de runtime d'execution, on fournit juste l'image Docker à exécuter)
 - Paiement à l’utilisation (au conteneur actif)
 
-az container create --resource-group rg-workshop --name dotnetappaci --image acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --registry-login-server acrworkshopdevcongalaxy.azurecr.io --registry-username $spid --registry-password $sppwd --dns-name-label dotnetappaci --ports 80
+_az container create --resource-group rg-workshop --name dotnetappaci --image acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --registry-login-server acrworkshopdevcongalaxy.azurecr.io --registry-username $spid --registry-password $sppwd --dns-name-label dotnetappaci --ports 80_
 
-az container show --resource-group rg-workshop --name dotnetappaci --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table
-az container logs --resource-group rg-workshop --name dotnetappaci
+_az container show --resource-group rg-workshop --name dotnetappaci --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table_
+
+_az container logs --resource-group rg-workshop --name dotnetappaci_
+
+--sep--
+---
+title: Azure App Services
+---
 
 ## Azure App Services
 
 ### Présentation
 
-Azure App Service est une offre de type PAAS qui vous permet d’héberger des applications web, des back-ends mobiles et des API REST dans le langage de programmation de votre choix (le runtime applicatif sera à définir au moment de la création de la web app : .Net, Python, Java, Node.js).
+Azure App Service est une offre de type PaaS qui vous permet d’héberger des applications web, des back-ends mobiles et des API REST dans le langage de programmation de votre choix (le runtime applicatif sera à définir au moment de la création de la web app : .Net, Python, Java, Node.js).
 Ce service offre une mise à l’échelle automatique et une haute disponibilité, prend en charge à la fois Windows et Linux sans toutefois avoir à gérer l’infrastructure sous jacente.
 
 De la même façon que pour une WebAPI ou un site ASP.Net “standard” il est possible de déployer un conteneur dans une App Services.
@@ -249,6 +261,7 @@ Pour avoir la liste complete des plan disponible, je vous propose ce [lien](http
 _az appservice plan create --name plan-workshop --resource-group rg-workshop --is-linux --sku B1_
 
 Je créé ma webapp :
+
 _az webapp create --resource-group rg-workshop --plan plan-workshop --name dotnetappservices --deployment-container-image-name acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1_
 
 // Ne fonctionnera pas.
@@ -257,14 +270,20 @@ https://github.com/Azure/app-service-linux-docs/blob/master/service_principal_au
 $SP_PASSWD=$(az ad sp create-for-rbac --name http://sp-acr --scopes $registryId --role acrpull --query password --output tsv)
 $SP_APP_ID=$(az ad sp show --id http://sp-acr --query appId --output tsv)
 
-az webapp config container set --name dotnetappservices --resource-group rg-workshop --docker-custom-image-name acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --docker-registry-server-url https://acrworkshopdevcongalaxy.azurecr.io --docker-registry-server-user $sp_app_id --docker-registry-server-password $sp_passwd
+_az webapp config container set --name dotnetappservices --resource-group rg-workshop --docker-custom-image-name acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --docker-registry-server-url https://acrworkshopdevcongalaxy.azurecr.io --docker-registry-server-user $sp_app_id --docker-registry-server-password $sp_passwd_
 
-az webapp log config --name dotnetappservices --resource-group rg-workshop --docker-container-logging filesystem
-az webapp log tail --name dotnetappservices --resource-group rg-workshop
+_az webapp log config --name dotnetappservices --resource-group rg-workshop --docker-container-logging filesystem_
+
+_az webapp log tail --name dotnetappservices --resource-group rg-workshop_
+
+--sep--
+---
+title: Azure Kubernetes Services
+---
 
 ## Création du cluster Azure Kubernetes Services
 
-Je créé maintenant mon Azure Kubernetes Service grace au script initAKS.ps1. Ce script est très simple, il a pour de but de provisionner un cluster Azure Kubernetes Services tout en configurant ces droits d'accès à la registry demandée via la propriété _attach-acr_. Je demande par ailleurs que mon cluster soit constitués de 3 nodes déployer sur des zones de disponibilités différentes.
+Je créé maintenant mon Azure Kubernetes Service grace au script initAKS.ps1. Ce script est très simple, il a pour de but de provisionner un cluster Azure Kubernetes Services tout en configurant ces droits d'accès à la registry demandée via la propriété _attach-acr_. Je demande par ailleurs que mon cluster soit constitués de 3 nodes déployés sur des zones de disponibilités différentes.
 
 Les zones de disponibilité sont des emplacements physiquement séparés au sein d’une région Azure comme France Centre (minimum 3). Chaque zone de disponibilité est composée d’un ou de plusieurs centres de données équipés d’une alimentation, d’un refroidissement et d’un réseau indépendants.
 

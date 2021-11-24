@@ -163,7 +163,7 @@ Ce [registry](https://azure.microsoft.com/fr-fr/services/container-registry) vou
 
 Vous pouvez demander la création de votre Container Registry grâce à cette commande :
 
-_az acr create --resource-group rg-workshop --name acr-workshopdevcongalaxy --sku Basic_
+_az acr create --resource-group rg-workshop --name acrworkshopdevcongalaxy --sku Basic_
 
 ![Creation du container registry](media/5-registrycreate.PNG)
 
@@ -198,33 +198,6 @@ Hébergeant lui même une image Docker nommée appworkshop :
 
 ![Vérification sur le portail](media/9-portail-registry.PNG)
 
-## Gestion des droits
-
-Avant de provisionner nos différents services pour executer notre application, nous avons un aspect sécurité à gérer pour permettre la communication entre notre registry et nos futurs services d'exécution.
-Ce besoin passe par ce qu'on appelle un service principal.
-
-Je créé donc un service principal via la commande :
-
-_az ad sp create-for-rbac --skip-assignment --name sp-acr_
-
-![Création du service principal](media/10-serviceprincipal.PNG)
-
-Et pour leur utilisation ultérieure je les affecte manuellement à deux variables :
-
-![Création du service principal](media/11-setserviceprincipal.PNG)
-
-J’ai maintenant besoin d’identifier ma registry :
-
-_$registryId=$(az acr show --resource-group rg-workshop --name acrworkshopdevcongalaxy --query "id" --output tsv)_
-
-Je vais maintenant donner à mon service principal le droit d’utiliser ma registry (uniquement pour récupérer une image : acrpull) grâce à cette commande :
-
-_az role assignment create --assignee $spid --scope $registryId --role acrpull_
-
-J’obtiens alors un JSON descriptif de l’autorisation accordée :
-
-![Affectation du rôle](media/12-roleassignacrpull.PNG)
-
 --sep--
 ---
 title: Azure Container Instance
@@ -241,7 +214,11 @@ Cette solution est donc plutôt orienté :
 - Serverless (on ne configure pas de vm ni de runtime d'execution, on fournit juste l'image Docker à exécuter)
 - Paiement à l’utilisation (au conteneur actif)
 
-_az container create --resource-group rg-workshop --name dotnetappaci --image acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --registry-login-server acrworkshopdevcongalaxy.azurecr.io --registry-username $spid --registry-password $sppwd --dns-name-label dotnetappaci --ports 80_
+TODO : Activer l'authentification admin sur la registry.
+
+_az container create --resource-group rg-workshop --name dotnetappaci --image acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --registry-login-server acrworkshopdevcongalaxy.azurecr.io --registry-username $adminuser --registry-password $adminpwd --dns-name-label dotnetappaci --ports 80_
+
+TODO : expliquer commandes :
 
 _az container show --resource-group rg-workshop --name dotnetappaci --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table_
 
@@ -271,17 +248,6 @@ _az appservice plan create --name plan-workshop --resource-group rg-workshop --i
 Je créé ma webapp :
 
 _az webapp create --resource-group rg-workshop --plan plan-workshop --name dotnetappservices --deployment-container-image-name acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1_
-
-// Ne fonctionnera pas.
-
-https://github.com/Azure/app-service-linux-docs/blob/master/service_principal_auth_acr.md
-
-$SP_PASSWD=$(az ad sp create-for-rbac --name http://sp-acr --scopes $registryId --role acrpull --query password --output tsv)
-$SP_APP_ID=$(az ad sp show --id http://sp-acr --query appId --output tsv)
-
-_az webapp config container set --name dotnetappservices --resource-group rg-workshop --docker-custom-image-name acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --docker-registry-server-url https://acrworkshopdevcongalaxy.azurecr.io --docker-registry-server-user $sp_app_id --docker-registry-server-password $sp_passwd_
-
-_az webapp log config --name dotnetappservices --resource-group rg-workshop --docker-container-logging filesystem_
 
 _az webapp log tail --name dotnetappservices --resource-group rg-workshop_
 
@@ -325,7 +291,7 @@ Grâce à AKS, plateforme de choix pour la mise en oeuvre de microservices, Micr
 
 ## Création du cluster Azure Kubernetes Services
 
-Je créé maintenant mon Azure Kubernetes Service grace au script initAKS.ps1. Ce script est très simple, il a pour de but de provisionner un cluster Azure Kubernetes Services tout en configurant ces droits d'accès à la registry demandée via la propriété _attach-acr_. Je demande par ailleurs que mon cluster soit constitués de 3 nodes déployés sur des zones de disponibilités différentes.
+Je créé maintenant mon Azure Kubernetes Service grace au script initAKS.ps1 présent dans le repo Git. Ce script est très simple, il a pour de but de provisionner un cluster Azure Kubernetes Services tout en configurant ces droits d'accès à la registry demandée via la propriété _attach-acr_. Je demande par ailleurs que mon cluster soit constitués de 3 nodes déployés sur des zones de disponibilités différentes.
 
 Les zones de disponibilité sont des emplacements physiquement séparés au sein d’une région Azure comme France Centre (minimum 3). Chaque zone de disponibilité est composée d’un ou de plusieurs centres de données équipés d’une alimentation, d’un refroidissement et d’un réseau indépendants.
 
@@ -348,7 +314,7 @@ L'installeur vous demande de jouer cette commande Powershell : $env:path += 'C:\
 
 Maintenant pour pouvoir utiliser votre cluster en local, il faut executer :
 
-_az aks get-credentials --resource-group rg-workshop --name aks-workshopdevcongalaxy_
+_az aks get-credentials --resource-group rg-workshop --name aksdemoworkshop_
 
 ![Connexion au cluster AKS](media/17-credentialsaks.PNG)
 

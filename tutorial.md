@@ -390,6 +390,18 @@ Grace au replicaset, un nouveau pod est automatiquement créé pour le remplacer
 
 --sep--
 ---
+title: Azure Container Apps
+---
+
+Annoncé lors du Microsoft Ignite 2021 de début Novembre, un nouveau service fait son apparition (actuellement en preview) pour du déploiement de containers dans Azure !
+
+Azure Container Apps !
+https://docs.microsoft.com/fr-fr/azure/container-apps/overview
+
+Je completerai cette section après avoir testé ce nouveau composant.
+
+--sep--
+---
 title: Un peu de ménage !
 ---
 
@@ -399,13 +411,6 @@ Pour éviter les mauvaises surprises au niveau de la tarification, n'oubliez pas
 Pour cela vous pouvez supprimer le groupe de ressource rg-workshop directement sur le portail Azure ou bien grace à cette commande :
 
 _az group delete --name rg-workshop_
-
---sep--
----
-title: Azure Container Apps
----
-
-TODO
 
 --sep--
 ---

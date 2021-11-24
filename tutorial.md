@@ -214,13 +214,25 @@ Cette solution est donc plutôt orienté :
 - Serverless (on ne configure pas de vm ni de runtime d'execution, on fournit juste l'image Docker à exécuter)
 - Paiement à l’utilisation (au conteneur actif)
 
-TODO : Activer l'authentification admin sur la registry.
+Attention, pour pouvoir déployer le container de cette manière, vous devrez activer l'authentification via le compte Admin sur la Registry :
+
+![Compte Administrateur sur l'ACR](media/acrwithadmin.PNG)
+
+Notez ensuite le username et le password affiché à l'écran.
 
 _az container create --resource-group rg-workshop --name dotnetappaci --image acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1 --registry-login-server acrworkshopdevcongalaxy.azurecr.io --registry-username $adminuser --registry-password $adminpwd --dns-name-label dotnetappaci --ports 80_
 
-TODO : expliquer commandes :
+Il y a une autre possibilité pour gérer l'authentification à votre registry, via un service principal. Plutot que d'utiliser un comtpe lié à la registry, vous allez créer une identité Azure à laquelle vous allez donner un droit "AcrPull" sur votre registry.
+Un exemple ici :
+- https://docs.microsoft.com/fr-fr/azure/container-registry/container-registry-auth-aci
+
+Pour récupérer l'URL d'accès à votre ACI, vous pouvez utiliser cette commande :
 
 _az container show --resource-group rg-workshop --name dotnetappaci --query "{FQDN:ipAddress.fqdn,ProvisioningState:provisioningState}" --out table_
+
+![Déploiement ACR](media/aciup.PNG)
+
+Et celle-ci pour accéder aux logs :
 
 _az container logs --resource-group rg-workshop --name dotnetappaci_
 
@@ -248,6 +260,10 @@ _az appservice plan create --name plan-workshop --resource-group rg-workshop --i
 Je créé ma webapp :
 
 _az webapp create --resource-group rg-workshop --plan plan-workshop --name dotnetappservices --deployment-container-image-name acrworkshopdevcongalaxy.azurecr.io/appworkshop:v1_
+
+![Déploiement App Service](media/appserviceup.PNG)
+
+L'accès aux logs se fait via cette commande :
 
 _az webapp log tail --name dotnetappservices --resource-group rg-workshop_
 
@@ -383,6 +399,13 @@ Pour éviter les mauvaises surprises au niveau de la tarification, n'oubliez pas
 Pour cela vous pouvez supprimer le groupe de ressource rg-workshop directement sur le portail Azure ou bien grace à cette commande :
 
 _az group delete --name rg-workshop_
+
+--sep--
+---
+title: Azure Container Apps
+---
+
+TODO
 
 --sep--
 ---
